@@ -1,0 +1,1 @@
+cloud-config files for the coreos machines inside the company.
