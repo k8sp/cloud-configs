@@ -14,7 +14,7 @@ coreos:
         reboot-strategy: "etcd-lock"
     units:
         - name: "etcd2.service"
-          #command: "start"
+          command: "start"
         - name: "fleet.service"
           command: "start"
         - name: "flanneld.service"
