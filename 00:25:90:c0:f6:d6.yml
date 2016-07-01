@@ -2,7 +2,7 @@
 
 coreos:
     etcd2:
-        discovery: "https://discovery.etcd.io/4d469900744be474d90690bc899bf4fc"
+        discovery: "https://discovery.etcd.io/91c3d119589ae183a3c66d9c0adea24b"
         # multi-region and multi-cloud deployments need to use $public_ipv4
         advertise-client-urls: "http://10.10.10.203:2379"
         initial-advertise-peer-urls: "http://10.10.10.203:2380"
