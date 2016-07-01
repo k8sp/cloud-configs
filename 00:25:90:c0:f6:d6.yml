@@ -12,6 +12,9 @@ coreos:
         listen-peer-urls: "http://10.10.10.203:2380,http://10.10.10.203:7001"
     update:
         reboot-strategy: "etcd-lock"
+    flannel:
+        etcd_endpoints: "http://10.10.10.201:2379,http://10.10.10.202:2379,http://10.10.10.203:2379,http://10.10.10.204:2379,http://10.10.10.205:2379"
+        interface: "10.10.10.203"
     units:
         - name: "etcd2.service"
           command: "start"
@@ -20,6 +23,13 @@ coreos:
         - name: "flanneld.service"
           command: "start"
         - name: "docker.socket"
+          command: "start"
+        - name: "flanneld.service"
+          drop-ins:
+            - name: 50-network-config.conf
+              content: |
+                [Service]
+                ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.1.0.0/16" }'
           command: "start"
 
 hostname: "zodiac-03"
