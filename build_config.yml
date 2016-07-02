@@ -63,5 +63,3 @@
   etcd2: False
   hostname: "coreos-191"
   nic_name: "enp11s0f0"
-
-
