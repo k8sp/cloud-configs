@@ -1,5 +1,14 @@
 __cloud-config files for the coreos machines inside the company.__
 
+## 批量生成配置
+
+### 安装依赖环境
+
+```shell
+# 安装 python 扩展模块
+pip install -r requirements.txt
+```
+
 ### 修改配置文件
 
 ```shell
