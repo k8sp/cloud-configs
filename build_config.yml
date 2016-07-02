@@ -1,0 +1,67 @@
+10.10.10.201:
+  MAC: "00:e0:81:ee:82:c4"
+  etcd2: True
+  hostname: "zodiac-01"
+  nic_name: "enp1s0f0"
+10.10.10.202:
+  MAC: "00:25:90:c0:f6:ee"
+  etcd2: True
+  hostname: "zodiac-02"
+  nic_name: "enp1s0f0"
+10.10.10.203:
+  MAC: "00:25:90:c0:f6:d6"
+  etcd2: True
+  hostname: "zodiac-03"
+  nic_name: "enp1s0f0"
+10.10.10.204:
+  MAC: "00:25:90:c0:f7:ac"
+  etcd2: True
+  hostname: "zodiac-04"
+  nic_name: "enp1s0f0"
+10.10.10.205:
+  MAC: "00:25:90:c0:f7:7e"
+  etcd2: True
+  hostname: "zodiac-05"
+  nic_name: "enp1s0f0"
+10.10.10.206:
+  MAC: "00:25:90:c0:f7:62"
+  etcd2: False
+  hostname: "zodiac-06"
+  nic_name: "enp1s0f0"
+10.10.10.207:
+  MAC: "00:25:90:c0:f7:68"
+  etcd2: False
+  hostname: "zodiac-07"
+  nic_name: "enp1s0f0"
+10.10.10.208:
+  MAC: "00:25:90:c0:f7:7a"
+  etcd2: False
+  hostname: "zodiac-08"
+  nic_name: "enp1s0f0"
+10.10.10.209:
+  MAC: "00:25:90:c0:f7:c8"
+  etcd2: False
+  hostname: "zodiac-09"
+  nic_name: "enp1s0f0"
+10.10.10.210:
+  MAC: "00:25:90:c0:f7:88"
+  etcd2: False
+  hostname: "zodiac-10"
+  nic_name: "enp1s0f0"
+10.10.10.211:
+  MAC: "00:25:90:c0:f7:7c"
+  etcd2: False
+  hostname: "zodiac-11"
+  nic_name: "enp1s0f0"
+10.10.10.212:
+  MAC: "00:25:90:c0:f7:86"
+  etcd2: False
+  hostname: "zodiac-12"
+  nic_name: "enp1s0f0"
+10.10.10.191:
+  MAC: "00:e0:81:ee:82:c4"
+  etcd2: False
+  hostname: "coreos-191"
+  nic_name: "enp11s0f0"
+
+
