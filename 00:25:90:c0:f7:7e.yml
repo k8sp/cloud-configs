@@ -20,8 +20,6 @@ coreos:
           command: "start"
         - name: "fleet.service"
           command: "start"
-        - name: "flanneld.service"
-          command: "start"
         - name: "docker.socket"
           command: "start"
         - name: "flanneld.service"
