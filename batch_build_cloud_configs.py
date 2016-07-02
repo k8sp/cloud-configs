@@ -15,6 +15,7 @@ Uses pyyaml and jinja2 two extension modules.
 from yaml import load
 from jinja2 import Environment, FileSystemLoader
 import os
+import sys
 import logging
 
 # Setting logger
@@ -25,6 +26,7 @@ logger = logging.getLogger('builder')
 logger.info("Read the configuration file...")
 if not os.path.isfile('build_config.yml'):
     logger.error('build_config.yml file not found!')
+    sys.exit(1)
 
 with open('build_config.yml', 'r') as f:
     b = f.read()

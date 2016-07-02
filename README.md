@@ -37,4 +37,4 @@ vim cloud-config.template
 ./batch_build_cloud_configs.py
 ```
 
-![2016-07-02_13-26-16](http://gitlab.yzs.io/k8sp/cloud-configs/raw/liwenshan/img/2016-07-02_13-26-16.png)
+![2016-07-02_13-26-16](http://gitlab.yzs.io/k8sp/cloud-configs/raw/master/img/2016-07-02_13-26-16.png)
