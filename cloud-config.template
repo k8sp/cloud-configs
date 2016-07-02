@@ -4,19 +4,21 @@ coreos:
     etcd2:
         discovery: "https://discovery.etcd.io/91c3d119589ae183a3c66d9c0adea24b"
         # multi-region and multi-cloud deployments need to use $public_ipv4
-        advertise-client-urls: "http://10.10.10.212:2379"
-        initial-advertise-peer-urls: "http://10.10.10.212:2380"
+        advertise-client-urls: "http://{{ own_ip }}:2379"
+        initial-advertise-peer-urls: "http://{{ own_ip }}:2380"
         # listen on both the official ports and the legacy ports
         # legacy ports can be omitted if your application doesn't depend on them
         listen-client-urls: "http://0.0.0.0:2379,http://0.0.0.0:4001"
-        listen-peer-urls: "http://10.10.10.212:2380,http://10.10.10.212:7001"
+        listen-peer-urls: "http://{{ own_ip }}:2380,http://{{ own_ip }}:7001"
     update:
         reboot-strategy: "etcd-lock"
     flannel:
         etcd_endpoints: "http://10.10.10.201:2379,http://10.10.10.202:2379,http://10.10.10.203:2379,http://10.10.10.204:2379,http://10.10.10.205:2379"
-        interface: "10.10.10.212"
+        interface: "{{ own_ip }}"
     units:
-        - name: "fleet.service"
+        {% if etcd2 %}- name: "etcd2.service"
+          command: "start"
+        {% endif %}- name: "fleet.service"
           command: "start"
         - name: "docker.socket"
           command: "start"
@@ -28,7 +30,7 @@ coreos:
                 ExecStartPre=/usr/bin/etcdctl --endpoints "http://10.10.10.201:2379,http://10.10.10.202:2379,http://10.10.10.203:2379,http://10.10.10.204:2379,http://10.10.10.205:2379" set /coreos.com/network/config '{ "Network": "10.1.0.0/16" }'
           command: "start"
 
-hostname: "zodiac-12"
+hostname: "{{ hostname }}"
 
 ssh_authorized_keys:
     - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAzAy8KEKxDMmjd55RMKLFs8bhNGHgC+pvjbC7BOp4gibozfZAr84nWsfZPs44h1jMq0pX2qzGOpzGEN9RH/ALFCe/OixWkh+INnVTIr8scZr6M+3NzN+chBVGvmIAebUfhXrrP7pUXwK06T2MyT7HaDumfUiHF+n3vNIQTpsxnJA7lmx2IJvz6EujK9le75vJM19MsbUZDk61wuiqhbUZMwQEAKrWsvt9CPhqyHD2Ueul0cG/0fHqOXS/fw7Ikg29rUwdzRuYnvw6izuvBoaHF6nNxR+qSiVi3uyJdNox0/nd87OVvd0fE5xEz+xZ8aFwGyAZabo/KWgcMxk6WN0O1Q== lipeng@Megatron"
@@ -52,7 +54,7 @@ write_files:
       Name=enp1s0f0
 
       [Network]
-      Address=10.10.10.212/24
+      Address={{ own_ip }}/24
       Gateway=10.10.10.192
 
       [Route]
@@ -97,3 +99,4 @@ write_files:
       OP9QZpPXHP46sRMYILtDXq5ou3e30+QJFXkI++4BQT3weW0SrfQFln8zWwR64hbl
       oIgHr1a+OTKckCMK0hTellMVmHqAUwK49DHv3KM1soacfuRWyVIjDM8=
       -----END RSA PRIVATE KEY-----
+

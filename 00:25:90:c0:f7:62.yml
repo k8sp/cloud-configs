@@ -1,44 +1,42 @@
 #cloud-config
 
 coreos:
-  etcd2:
-    discovery: "https://discovery.etcd.io/91c3d119589ae183a3c66d9c0adea24b"
-    # multi-region and multi-cloud deployments need to use $public_ipv4
-    advertise-client-urls: "http://10.10.10.206:2379"
-    initial-advertise-peer-urls: "http://10.10.10.206:2380"
-    # listen on both the official ports and the legacy ports
-    # legacy ports can be omitted if your application doesn't depend on them
-    listen-client-urls: "http://0.0.0.0:2379,http://0.0.0.0:4001"
-    listen-peer-urls: "http://10.10.10.206:2380,http://10.10.10.206:7001"
-  update:
-    reboot-strategy: "etcd-lock"
-  flannel:
-    etcd_endpoints: "http://10.10.10.201:2379,http://10.10.10.202:2379,http://10.10.10.203:2379,http://10.10.10.204:2379,http://10.10.10.205:2379"
-    interface: "10.10.10.206"
-  units:
-    - name: "etcd2.service"
-      #command: "start"
-    - name: "fleet.service"
-      command: "start"
-    - name: "docker.socket"
-      command: "start"
-    - name: "flanneld.service"
-      drop-ins:
-        - name: 50-network-config.conf
-          content: |
-            [Service]
-            ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network": "10.1.0.0/16"}'
-      command: "start"
+    etcd2:
+        discovery: "https://discovery.etcd.io/91c3d119589ae183a3c66d9c0adea24b"
+        # multi-region and multi-cloud deployments need to use $public_ipv4
+        advertise-client-urls: "http://10.10.10.206:2379"
+        initial-advertise-peer-urls: "http://10.10.10.206:2380"
+        # listen on both the official ports and the legacy ports
+        # legacy ports can be omitted if your application doesn't depend on them
+        listen-client-urls: "http://0.0.0.0:2379,http://0.0.0.0:4001"
+        listen-peer-urls: "http://10.10.10.206:2380,http://10.10.10.206:7001"
+    update:
+        reboot-strategy: "etcd-lock"
+    flannel:
+        etcd_endpoints: "http://10.10.10.201:2379,http://10.10.10.202:2379,http://10.10.10.203:2379,http://10.10.10.204:2379,http://10.10.10.205:2379"
+        interface: "10.10.10.206"
+    units:
+        - name: "fleet.service"
+          command: "start"
+        - name: "docker.socket"
+          command: "start"
+        - name: "flanneld.service"
+          drop-ins:
+            - name: 50-network-config.conf
+              content: |
+                [Service]
+                ExecStartPre=/usr/bin/etcdctl --endpoints "http://10.10.10.201:2379,http://10.10.10.202:2379,http://10.10.10.203:2379,http://10.10.10.204:2379,http://10.10.10.205:2379" set /coreos.com/network/config '{ "Network": "10.1.0.0/16" }'
+          command: "start"
 
 hostname: "zodiac-06"
 
 ssh_authorized_keys:
-  - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAzAy8KEKxDMmjd55RMKLFs8bhNGHgC+pvjbC7BOp4gibozfZAr84nWsfZPs44h1jMq0pX2qzGOpzGEN9RH/ALFCe/OixWkh+INnVTIr8scZr6M+3NzN+chBVGvmIAebUfhXrrP7pUXwK06T2MyT7HaDumfUiHF+n3vNIQTpsxnJA7lmx2IJvz6EujK9le75vJM19MsbUZDk61wuiqhbUZMwQEAKrWsvt9CPhqyHD2Ueul0cG/0fHqOXS/fw7Ikg29rUwdzRuYnvw6izuvBoaHF6nNxR+qSiVi3uyJdNox0/nd87OVvd0fE5xEz+xZ8aFwGyAZabo/KWgcMxk6WN0O1Q== lipeng@Megatron"
-  - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVwfLAgA8DICHp0//xfBTgfU34fVOtKpxgrkceC605HGQ6GIPsBHKw6CYeGziwZBDNtMZxTeyQ7+79sqA2VUR2I5nrhlxw/Wc80yTsjbRmcIbr3mUNCd3+cOqnOAsWEucZCHHcNYwUQ3wIOoyP0cBLKI4b25ucgtawxCmB7PJ1Cme+vIf1cVffeQqedu7hmlpQf/DnQc7O1iBRhEAqKgy1Y+hb0Ryc7StAe0nDHCj+2b08vHlNXaS2sJKrXUE0HhCZZP46APaLmZPmmHeoJKx31M0IERWYaZRvLe0Pl7Pp6DueOSJvvNwR5YbNe5aQ2pO3xiv3wCj6n66dlqAhpmmD vien.lee@localhost"
-  - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCrYpsQVHBRUA/sZfxgK+9jZBGZfoulXXe0faPCGC0b3L6z/qYzJnNFf1d4gj6hQaGyHGvVlr6Kd/6y+0Eour51R2H+8FO+9Y7BaomuluHzm/jcgruAmbVrXZ8vKDDPDx4Lf1tnU1SqPpKFRgdro+BUcj/0LZ45tzsblpA2JOiMJkpqtx17WPKIzc9q5OZKVcV+zh/O+JuKLW/bDIndGiQRVJBGa87ZkCf+fzO5ME4nl7MsG/YY+9J/UkwDbZQd3wFTRqmHncrSupNhu1R2DttP9eWSHQsJIaEXmqKv4p7p4byztix3A/2hBUILZa3iDwxlCZq7OBrQCc/xOI45VMR7 liangjiameng@liangjiameng-Ubuntu"
-  - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAr5WIU6wES7WLrWTd3Y+vykAKERYdCzUne3xtlzk9tkcVTQ1IZ5I/cd+x7yw1BM69iRGkGWGRR4Z7k7CzQEbQ8udvK4KEOdZ+JWQfqm8XSlG4CA/cxevu55Trnp7kL4Kb5AtYxnIDhxS6NkrNrte5S4HBpQTA92DXtRW+nplyZ5TAk/qfOMcLoY1tdlTzGdPjWksvb13vvsBv8WkzqIXnBo+2ZJ9ZdieWLJlU0ExPqCH+kdPfv54kf7d8VY8+5jPXZ4IKGOMwi5929iVmkSzrKjvWdMT0aYSAzysohdchLbZcsm4iyQcAwU/J7kkZBbfvOcKr7EGQOif+F1Ag2LtNsQ== liuqs@Megatron"
-  - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC866Ci5hod20ghEL+RDkEqKoAHOJtOwS18GiUGs3mrW5dAWrX22UJUTkNAh5SXKh60x/sRhItAAOscZ7zht6zzGfH1U2F2Thph1V3dPy7Fimo0c+rB4VXiQgZRZXKMUJ8rNUBO5avsjVH8gqmT5uyy6hUHqnqvug9PfVjaTunw6TBWSzVEqmsv8MpvH8lBBJ5WJidvXGNaYIB6l90/sm09SQJLheHVQJgFXbSJAOMRVKAoX4XCyAjPSnH4CLqNB8UvY9MGQKxTve2fCeUx8iSuE+Et8QrmF4wNo0Exh9Dsuk7OOr1hoZeECr+0pbahhwYIENjdXpT9lQoOxG35TjEB crawler@Crawler-01"
-  - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDXena9hVzYpSHINYQyw2Flawjeja3PbcAGJPKmPCsl3sKkPygSXiN1zR8TOBiGrItX4aoLWBydmpn4wjis7RSVQIeeu1+Lk/qKm55zge6t3y1C38DSCPtW23mGvxojRbwAOzHjUqnrmP84g+MglNTaGod3HUMfzKd9YGTNm9QzcSRlmt87YGpsOQLJO0CQSJTwvSzNuH812a9kikdN5SR7OxUqbhxZE6vAk6glcVTrn/fxBY0i/l0LqHelJHGnMza4+jRs+p4Rp/QsLTaK60kfPYTpmJ6SfWrZBVAS0Oen5ZsPPTleu0okzy/20Iu/vrrW6OItEEvkCoLqtjANNUfn core@zodiac-01"
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAzAy8KEKxDMmjd55RMKLFs8bhNGHgC+pvjbC7BOp4gibozfZAr84nWsfZPs44h1jMq0pX2qzGOpzGEN9RH/ALFCe/OixWkh+INnVTIr8scZr6M+3NzN+chBVGvmIAebUfhXrrP7pUXwK06T2MyT7HaDumfUiHF+n3vNIQTpsxnJA7lmx2IJvz6EujK9le75vJM19MsbUZDk61wuiqhbUZMwQEAKrWsvt9CPhqyHD2Ueul0cG/0fHqOXS/fw7Ikg29rUwdzRuYnvw6izuvBoaHF6nNxR+qSiVi3uyJdNox0/nd87OVvd0fE5xEz+xZ8aFwGyAZabo/KWgcMxk6WN0O1Q== lipeng@Megatron"
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVwfLAgA8DICHp0//xfBTgfU34fVOtKpxgrkceC605HGQ6GIPsBHKw6CYeGziwZBDNtMZxTeyQ7+79sqA2VUR2I5nrhlxw/Wc80yTsjbRmcIbr3mUNCd3+cOqnOAsWEucZCHHcNYwUQ3wIOoyP0cBLKI4b25ucgtawxCmB7PJ1Cme+vIf1cVffeQqedu7hmlpQf/DnQc7O1iBRhEAqKgy1Y+hb0Ryc7StAe0nDHCj+2b08vHlNXaS2sJKrXUE0HhCZZP46APaLmZPmmHeoJKx31M0IERWYaZRvLe0Pl7Pp6DueOSJvvNwR5YbNe5aQ2pO3xiv3wCj6n66dlqAhpmmD vien.lee@localhost"
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCrYpsQVHBRUA/sZfxgK+9jZBGZfoulXXe0faPCGC0b3L6z/qYzJnNFf1d4gj6hQaGyHGvVlr6Kd/6y+0Eour51R2H+8FO+9Y7BaomuluHzm/jcgruAmbVrXZ8vKDDPDx4Lf1tnU1SqPpKFRgdro+BUcj/0LZ45tzsblpA2JOiMJkpqtx17WPKIzc9q5OZKVcV+zh/O+JuKLW/bDIndGiQRVJBGa87ZkCf+fzO5ME4nl7MsG/YY+9J/UkwDbZQd3wFTRqmHncrSupNhu1R2DttP9eWSHQsJIaEXmqKv4p7p4byztix3A/2hBUILZa3iDwxlCZq7OBrQCc/xOI45VMR7 liangjiameng@liangjiameng-Ubuntu"
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAr5WIU6wES7WLrWTd3Y+vykAKERYdCzUne3xtlzk9tkcVTQ1IZ5I/cd+x7yw1BM69iRGkGWGRR4Z7k7CzQEbQ8udvK4KEOdZ+JWQfqm8XSlG4CA/cxevu55Trnp7kL4Kb5AtYxnIDhxS6NkrNrte5S4HBpQTA92DXtRW+nplyZ5TAk/qfOMcLoY1tdlTzGdPjWksvb13vvsBv8WkzqIXnBo+2ZJ9ZdieWLJlU0ExPqCH+kdPfv54kf7d8VY8+5jPXZ4IKGOMwi5929iVmkSzrKjvWdMT0aYSAzysohdchLbZcsm4iyQcAwU/J7kkZBbfvOcKr7EGQOif+F1Ag2LtNsQ== liuqs@Megatron"
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC866Ci5hod20ghEL+RDkEqKoAHOJtOwS18GiUGs3mrW5dAWrX22UJUTkNAh5SXKh60x/sRhItAAOscZ7zht6zzGfH1U2F2Thph1V3dPy7Fimo0c+rB4VXiQgZRZXKMUJ8rNUBO5avsjVH8gqmT5uyy6hUHqnqvug9PfVjaTunw6TBWSzVEqmsv8MpvH8lBBJ5WJidvXGNaYIB6l90/sm09SQJLheHVQJgFXbSJAOMRVKAoX4XCyAjPSnH4CLqNB8UvY9MGQKxTve2fCeUx8iSuE+Et8QrmF4wNo0Exh9Dsuk7OOr1hoZeECr+0pbahhwYIENjdXpT9lQoOxG35TjEB crawler@Crawler-01"
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDXena9hVzYpSHINYQyw2Flawjeja3PbcAGJPKmPCsl3sKkPygSXiN1zR8TOBiGrItX4aoLWBydmpn4wjis7RSVQIeeu1+Lk/qKm55zge6t3y1C38DSCPtW23mGvxojRbwAOzHjUqnrmP84g+MglNTaGod3HUMfzKd9YGTNm9QzcSRlmt87YGpsOQLJO0CQSJTwvSzNuH812a9kikdN5SR7OxUqbhxZE6vAk6glcVTrn/fxBY0i/l0LqHelJHGnMza4+jRs+p4Rp/QsLTaK60kfPYTpmJ6SfWrZBVAS0Oen5ZsPPTleu0okzy/20Iu/vrrW6OItEEvkCoLqtjANNUfn core@zodiac-01"
 
 write_files:
   - path: "/etc/resolv.conf"
@@ -64,6 +62,10 @@ write_files:
       [Route]
       Gateway=10.10.10.254
       Destination=192.169.100.0/24
+
+      [Route]
+      Gateway=10.10.10.254
+      Destination=192.168.6.0/24
   - path: "/home/core/.ssh/id_rsa"
     permissions: "0600"
     owner: "core"
