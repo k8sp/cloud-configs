@@ -1,5 +1,5 @@
 10.10.10.201:
-  MAC: "00:e0:81:ee:82:c4"
+  MAC: "00:25:90:c0:f7:80"
   etcd2: True
   hostname: "zodiac-01"
   nic_name: "enp1s0f0"
