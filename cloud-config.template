@@ -2,7 +2,7 @@
 
 coreos:
     etcd2:
-        discovery: "https://discovery.etcd.io/91c3d119589ae183a3c66d9c0adea24b"{% if etcd2 == "proxy" %}
+        discovery: "https://discovery.etcd.io/5e2d8844b9047f48d45fa70ab4a93765"{% if etcd2 == "proxy" %}
         proxy: "on"{% endif %}
         # multi-region and multi-cloud deployments need to use $public_ipv4
         advertise-client-urls: "http://{{ own_ip }}:2379"
