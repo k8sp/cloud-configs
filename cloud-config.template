@@ -2,7 +2,8 @@
 
 coreos:
     etcd2:
-        discovery: "https://discovery.etcd.io/91c3d119589ae183a3c66d9c0adea24b"
+        discovery: "https://discovery.etcd.io/91c3d119589ae183a3c66d9c0adea24b"{% if etcd2 == "proxy" %}
+        proxy: "on"{% endif %}
         # multi-region and multi-cloud deployments need to use $public_ipv4
         advertise-client-urls: "http://{{ own_ip }}:2379"
         initial-advertise-peer-urls: "http://{{ own_ip }}:2380"
@@ -20,9 +21,9 @@ coreos:
         etcd_endpoints: "http://10.10.10.201:2379,http://10.10.10.202:2379,http://10.10.10.203:2379,http://10.10.10.204:2379,http://10.10.10.205:2379"
         interface: "{{ own_ip }}"
     units:
-        {% if etcd2 %}- name: "etcd2.service"
+        - name: "etcd2.service"
           command: "start"
-        {% endif %}- name: "fleet.service"
+        - name: "fleet.service"
           command: "start"
         - name: "docker.socket"
           command: "start"
