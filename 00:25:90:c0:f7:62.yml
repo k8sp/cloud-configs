@@ -3,6 +3,7 @@
 coreos:
     etcd2:
         discovery: "https://discovery.etcd.io/91c3d119589ae183a3c66d9c0adea24b"
+        proxy: "on"
         # multi-region and multi-cloud deployments need to use $public_ipv4
         advertise-client-urls: "http://10.10.10.206:2379"
         initial-advertise-peer-urls: "http://10.10.10.206:2380"
@@ -18,6 +19,8 @@ coreos:
     flannel:
         interface: "10.10.10.206"
     units:
+        - name: "etcd2.service"
+          command: "start"
         - name: "fleet.service"
           command: "start"
         - name: "docker.socket"
