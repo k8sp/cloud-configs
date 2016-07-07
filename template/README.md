@@ -52,7 +52,7 @@ func HttpHandler(mac_addr) cloud_config {
   if err == nil {
     CacheToEtcd(template, config)
   } else {
-    template, config, err := GetFromEtcd()
+    template, config, err = GetFromEtcd()
     if err != nil {
 	  return err
     }
