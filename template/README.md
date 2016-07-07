@@ -48,13 +48,13 @@ bootstrapping etcd机群来缓存模板和配置信息。
 
 ```
 func HttpHandler(mac_addr) cloud_config {
-  template, config, timeout := RetriveFromGithub(timeout = 1s)
-  if !timeout {
+  template, config, err := RetriveFromGithub(timeout = 1s)
+  if err == nil {
     CacheToEtcd(template, config)
   } else {
-    template, config, ok := RetrieveFromEtcd()
-    if !ok {
-	  return error
+    template, config, err := GetFromEtcd()
+    if err != nil {
+	  return err
     }
   }
   return Execute(template, config[mac])
@@ -68,7 +68,7 @@ go func() {
   for {
     Sleep(10m)
     template, config := RetriveFromGithub(timeout = infinite)
-	WriteToEtcd(template, config)
+	CacheToEtcd(template, config)
   }
 }
 ```
