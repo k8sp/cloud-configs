@@ -55,7 +55,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     mac_addr := vars["mac"]
 
-    templ, config, err := RetriveFromGithub(1 * time.Second)
+    templ, config, err := RetriveFromGithub(10 * time.Second)
     if err != nil {
         CacheToEtcd(templ, config)
     } else {
