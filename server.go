@@ -9,7 +9,9 @@ import (
     "github.com/gorilla/mux"
     "golang.org/x/net/context"
     "github.com/coreos/etcd/client"
-    tp "./template"
+    "text/template"
+    "gopkg.in/yaml.v2"
+    tp "template-server/template"
 )
 
 var etcd_template_key = "/unisound/template_server/template"
@@ -42,7 +44,9 @@ func main() {
     go func() {
         for _ = range ticker.C {
             template, config, err := RetriveFromGithub(30 * time.Second)
-            CacheToEtcd(template, config)
+            if err == nil {
+                CacheToEtcd(template, config)
+            }
         }
     }()
 }
@@ -60,10 +64,10 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
             return
         }
     }
-    tpl := template.Parse(tmpl)
-    var cfg Config
-    err := yaml.Unmarshal([]byte(config), &config)
-    return tp.Execute(tpl, cfg, mac_addr, w)
+    tpl := template.Must(template.New("template").Parse(templ))
+    cfg := &tp.Config{}
+    err = yaml.Unmarshal([]byte(config), &cfg)
+    tp.Execute(tpl, cfg, mac_addr, w)
 }
 
 func RetriveFromGithub(timeout time.Duration) (template string, config string, err error){
@@ -86,14 +90,14 @@ func RetrieveFromEtcd() (template string, config string, err error){
         log.Fatal(err)
         return "", "", err
     } else {
-        template := resp.Node.Value
+        template = resp.Node.Value
     }
     resp, err = kapi.Get(context.Background(), etcd_config_key, nil)
     if err != nil {
         log.Fatal(err)
         return "", "", err
     } else {
-        config := resp.Node.Value
+        config = resp.Node.Value
     }
     return template, config, nil
 }
