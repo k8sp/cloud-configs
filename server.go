@@ -1,7 +1,7 @@
 package main
 
 import (
-//    "fmt"
+    "fmt"
     "log"
     "net/http"
     "io/ioutil"
@@ -16,8 +16,8 @@ import (
 
 var etcd_template_key = "/unisound/template_server/template"
 var etcd_config_key = "/unisound/template_server/config"
-var template_url = "https://raw.githubusercontent.com/k8sp/cloud-configs/template-server/template/cloud-config.template"
-var config_url = "https://raw.githubusercontent.com/k8sp/cloud-configs/template-server/template/build_config.yml"
+var template_url = "https://raw.githubusercontent.com/k8sp/cloud-configs/jiameng-template-server/template/cloud-config.template"
+var config_url = "https://raw.githubusercontent.com/k8sp/cloud-configs/jiameng-template-server/template/build_config.yml"
 
 var kapi client.KeysAPI
 
@@ -26,7 +26,7 @@ func init() {
         Endpoints:               []string{"http://127.0.0.1:2379"},
         Transport:               client.DefaultTransport,
         // set timeout per request to fail fast when the target endpoint is unavailable
-        HeaderTimeoutPerRequest: time.Second,
+        HeaderTimeoutPerRequest: time.Second * 2,
     }
     c, err := client.New(cfg)
     if err != nil {
@@ -44,9 +44,10 @@ func main() {
     go func() {
         for _ = range ticker.C {
             template, config, err := RetriveFromGithub(30 * time.Second)
-            if err == nil {
-                CacheToEtcd(template, config)
+            if err != nil {
+                continue
             }
+            CacheToEtcd(template, config)
         }
     }()
 }
@@ -57,12 +58,12 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 
     templ, config, err := RetriveFromGithub(10 * time.Second)
     if err != nil {
-        CacheToEtcd(templ, config)
-    } else {
         templ, config, err = RetrieveFromEtcd()
         if err != nil {
             return
         }
+    } else {
+        CacheToEtcd(templ, config)
     }
     tpl := template.Must(template.New("template").Parse(templ))
     cfg := &tp.Config{}
@@ -81,7 +82,7 @@ func RetriveFromGithub(timeout time.Duration) (template string, config string, e
         log.Fatal(err)
         return "", "", err
     }
-    return template, config, err
+    return template, config, nil 
 }
 
 func RetrieveFromEtcd() (template string, config string, err error){
@@ -103,6 +104,7 @@ func RetrieveFromEtcd() (template string, config string, err error){
 }
 
 func CacheToEtcd(template string, config string){
+    fmt.Printf("%#v\n", etcd_template_key)
     resp, err := kapi.Set(context.Background(), etcd_template_key, template, nil)
     if err != nil {
         log.Fatal(err)
@@ -110,6 +112,7 @@ func CacheToEtcd(template string, config string){
         // print common key info
         log.Printf("Set is done. Metadata is %q\n", resp)
     }
+    fmt.Printf("%#v\n", etcd_config_key)
     resp, err = kapi.Set(context.Background(), etcd_config_key, config, nil)
     if err != nil {
         log.Fatal(err)
@@ -125,11 +128,13 @@ func httpGet(url string, timeout time.Duration) (string, error) {
     }
     resp, err := client.Get(url)
     if err != nil {
+        log.Fatal(err)
         return "", err
     }
     defer resp.Body.Close()
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil {
+        log.Fatal(err)
         return "", err
     }
     return string(body), nil

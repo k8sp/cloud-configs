@@ -2,7 +2,7 @@ package template
 
 import (
 	"io"
-	"os"
+//	"os"
 	"text/template"
 )
 
@@ -35,5 +35,5 @@ func Execute(tmpl *template.Template, config *Config, mac string, w io.Writer) e
 		PerNodeConfig: config.Nodes[mac],
 		GlobalConfig:  config.Global,
 	}
-	return tmpl.Execute(os.Stdout, ec)
+	return tmpl.Execute(w, ec)
 }
