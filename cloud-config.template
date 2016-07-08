@@ -64,7 +64,7 @@ write_files:
     owner: "root"
     content: |
       [Match]
-      Name=enp1s0f0
+      Name={{ nic_name }}
 
       [Network]
       Address={{ own_ip }}/24
