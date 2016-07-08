@@ -64,7 +64,7 @@ write_files:
     owner: "root"
     content: |
       [Match]
-      Name=enp1s0f0
+      Name=enp11s0f0
 
       [Network]
       Address=10.10.10.191/24
